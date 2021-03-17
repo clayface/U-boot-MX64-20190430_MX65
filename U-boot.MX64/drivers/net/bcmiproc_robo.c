@@ -897,6 +897,8 @@ bcm_robo_enable_switch(robo_info_t *robo)
 
 
 			robo_serdes_init(robo, PAGE_P5_SGMII);
+//			robo_serdes_enable_set(robo, PAGE_P5_SGMII, 1);
+//			robo_serdes_speed_set(robo, PAGE_P4_SGMII, 1000);
 
 #ifdef SERDES_LOOPBACK
 
@@ -909,6 +911,8 @@ bcm_robo_enable_switch(robo_info_t *robo)
 		if (robo_is_port_cfg(4, PORTCFG_SGMII)) {
 			/* enable port4 sgmii */
 			robo_serdes_init(robo, PAGE_P4_SGMII);
+//			robo_serdes_enable_set(robo, PAGE_P4_SGMII, 1);
+//			robo_serdes_speed_set(robo, PAGE_P4_SGMII, 1000);
 #ifdef SERDES_LOOPBACK
 			printf("Set loop back port 4\n");
 			robo_serdes_lb_set(robo, PAGE_P4_SGMII, 1);
@@ -922,6 +926,7 @@ bcm_robo_enable_switch(robo_info_t *robo)
 		/* start serdes pll */
 		robo_serdes_start_pll(robo, PAGE_P5_SGMII);
 		//robo_serdes_start_pll(robo, PAGE_P4_SGMII);
+
 	}
 #endif //defined(CONFIG_NS_PLUS))
 
@@ -941,7 +946,7 @@ robo_is_port_cfg(int port, char *cfg)
 	var = getenv(name);
 	if (var == NULL) {
 		/* if no port config then normal port config */
-		return 0;
+		return 1;
 	}
 
 	if (strcmp(var, cfg)==0) {

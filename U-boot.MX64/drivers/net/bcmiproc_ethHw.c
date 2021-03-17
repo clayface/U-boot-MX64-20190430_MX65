@@ -481,6 +481,11 @@ ethHw_chipAttach(bcm_eth_t *eth_data)
 		uint32 tmp;
 		uint	idx;
 
+//		/* reset qca switches */
+//		tmp = ethHw_readl(GPIO_OUTENABLE);
+//                tmp |= ( 1<< 15 );
+//                ethHw_writel(tmp, GPIO_OUTENABLE);
+
 		//printf("%s Going to initialize SGMII ports\n", __FUNCTION__);
 		/* take the LCPLL2 out of powerdown and reset */
 		/* unlock access to LCPLL registers */
@@ -556,9 +561,9 @@ ethHw_chipAttach(bcm_eth_t *eth_data)
 		/* turnoff tx disable SFP0_TXDIS - GPIO 26*/
 		//printf("%s set GPIO26 output 0\n", __FUNCTION__);
 
-		tmp = ethHw_readl(GPIO_OUTENABLE);
-		tmp |= ( 1<< 26 );
-		ethHw_writel(tmp, GPIO_OUTENABLE);
+		//tmp = ethHw_readl(GPIO_OUTENABLE);
+		//tmp |= ( 1<< 26 );
+		//ethHw_writel(tmp, GPIO_OUTENABLE);
 
 
 
@@ -598,9 +603,14 @@ ethHw_chipAttach(bcm_eth_t *eth_data)
 		/* turnoff tx disable SFP1_TXDIS - GPIO 27*/
 		//printf("%s set GPIO27 output 0\n", __FUNCTION__);
 
+/*
 		tmp = ethHw_readl(GPIO_OUTENABLE);
-		tmp |= ( 1<< 27 );
+		tmp |= ( 1 << 15 );
 		ethHw_writel(tmp, GPIO_OUTENABLE);
+                tmp = ethHw_readl(GPIO_OUTENABLE);
+                tmp |= ( 0 << 15 );
+                ethHw_writel(tmp, GPIO_OUTENABLE);
+*/
 	}
 #endif //defined(CONFIG_NS_PLUS))
 
@@ -2273,8 +2283,8 @@ chip_phy_wr(bcm_eth_t *eth_data, uint ext, uint phyaddr, uint reg, uint16_t v)
 			(reg << ChipcommonB_MII_Management_Command_Data__RA_R) |		/* RA */
 			(2 << ChipcommonB_MII_Management_Command_Data__TA_R) |			/* TA */
 			v;																/* Data */
-	//printf("%s wrt phy_data: 0x%x phyaddr(0x%x) reg(0x%x) val(0x%x)\n",
-	//		__FUNCTION__, tmp, phyaddr, reg, v);
+	printf("%s wrt phy_data: 0x%x phyaddr(0x%x) reg(0x%x) val(0x%x)\n",
+			__FUNCTION__, tmp, phyaddr, reg, v);
 	reg32_write(phy_data, tmp);
 
 	/* wait for it to complete */
@@ -2343,7 +2353,7 @@ chip_phy_rd(bcm_eth_t *eth_data, uint ext, uint phyaddr, uint reg)
 
 	/* read data */
 	tmp = reg32_read(phy_data);
-	//printf("%s rd phyaddr(0x%x) reg(0x%x) data: 0x%x\n", __FUNCTION__, phyaddr, reg, tmp);
+	printf("%s rd phyaddr(0x%x) reg(0x%x) data: 0x%x\n", __FUNCTION__, phyaddr, reg, tmp);
 
 	return (tmp & 0xffff);
 }

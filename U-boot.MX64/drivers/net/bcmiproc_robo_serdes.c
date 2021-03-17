@@ -202,28 +202,29 @@ robo_serdes_init(robo_info_t *robo, uint page)
 	data16 &= ~(0x0040);
 	srab_sgmii_wreg(robo, locpage, 0x833c, &data16);
 
-	/* Must Enable TX polarity flip */
-	srab_sgmii_rreg(robo, locpage, XGXS16G_TX0_TX_ACONTROL0r, &data16);
-	data16 |= TX0_TX_ACONTROL0_TXPOL_FLIP_MASK;
+//	/* Must Enable TX polarity flip */
+//	srab_sgmii_rreg(robo, locpage, XGXS16G_TX0_TX_ACONTROL0r, &data16);
+//	data16 |= TX0_TX_ACONTROL0_TXPOL_FLIP_MASK;
+	data16 = 0;
 	srab_sgmii_wreg(robo, locpage, XGXS16G_TX0_TX_ACONTROL0r, &data16);
 
-	/* disable CL73 BAM */
-	srab_sgmii_rreg(robo, locpage, 0x8372, &data16);
-	data16 &= ~(CL73_USERB0_CL73_BAMCTRL1_CL73_BAMEN_MASK);
-	srab_sgmii_wreg(robo, locpage, 0x8372, &data16);
+//	/* disable CL73 BAM */
+//	srab_sgmii_rreg(robo, locpage, 0x8372, &data16);
+//	data16 &= ~(CL73_USERB0_CL73_BAMCTRL1_CL73_BAMEN_MASK);
+//	srab_sgmii_wreg(robo, locpage, 0x8372, &data16);
 
-	/* Set Local Advertising Configuration */
-	data16 = MII_ANA_C37_FD | MII_ANA_C37_PAUSE | MII_ANA_C37_ASYM_PAUSE;
-	srab_sgmii_wreg(robo, locpage, XGXS16G_COMBO_IEEE0_AUTONEGADVr, &data16);
+//	/* Set Local Advertising Configuration */
+//	data16 = MII_ANA_C37_FD | MII_ANA_C37_PAUSE | MII_ANA_C37_ASYM_PAUSE;
+//	srab_sgmii_wreg(robo, locpage, XGXS16G_COMBO_IEEE0_AUTONEGADVr, &data16);
 
-	/* Disable BAM in Independent Lane mode. Over1G AN not supported  */
-	data16 = 0;
-	srab_sgmii_wreg(robo, locpage, XGXS16G_BAM_NEXTPAGE_MP5_NEXTPAGECTRLr, &data16);
-	srab_sgmii_wreg(robo, locpage, XGXS16G_BAM_NEXTPAGE_UD_FIELDr, &data16);
+//	/* Disable BAM in Independent Lane mode. Over1G AN not supported  */
+//	data16 = 0;
+//	srab_sgmii_wreg(robo, locpage, XGXS16G_BAM_NEXTPAGE_MP5_NEXTPAGECTRLr, &data16);
+//	srab_sgmii_wreg(robo, locpage, XGXS16G_BAM_NEXTPAGE_UD_FIELDr, &data16);
 
-	data16 = SERDESDIGITAL_CONTROL1000X1_CRC_CHECKER_DISABLE_MASK |
-				SERDESDIGITAL_CONTROL1000X1_DISABLE_PLL_PWRDWN_MASK |
-				SERDESDIGITAL_CONTROL1000X1_FIBER_MODE_1000X_MASK;
+	data16 = 0x100 | SERDESDIGITAL_CONTROL1000X1_CRC_CHECKER_DISABLE_MASK |
+				SERDESDIGITAL_CONTROL1000X1_DISABLE_PLL_PWRDWN_MASK;
+//!				SERDESDIGITAL_CONTROL1000X1_FIBER_MODE_1000X_MASK;
 
 //	data16 |= SERDESDIGITAL_CONTROL1000X1_REMOTE_LOOPBACK_MASK;
 	/*
@@ -233,16 +234,16 @@ robo_serdes_init(robo_info_t *robo, uint page)
 	srab_sgmii_wreg(robo, locpage, XGXS16G_SERDESDIGITAL_CONTROL1000X1r, &data16);
 
 	/* set autoneg */
-	data16 = MII_CTRL_AE | MII_CTRL_RAN;
-//	data16 = MII_CTRL_SS_MSB | MII_CTRL_FD;
+//	data16 = MII_CTRL_AE | MII_CTRL_RAN;
+	data16 = MII_CTRL_SS_MSB | MII_CTRL_FD;
 	srab_sgmii_wreg(robo, locpage, XGXS16G_COMBO_IEEE0_MIICNTLr, &data16);
 
 	/* Disable 10G parallel detect */
 	data16 = 0;
 	srab_sgmii_wreg(robo, locpage, XGXS16G_AN73_PDET_PARDET10GCONTROLr, &data16);
 
-	/* Disable BAM mode and Teton mode */
-	srab_sgmii_wreg(robo, locpage, XGXS16G_BAM_NEXTPAGE_MP5_NEXTPAGECTRLr, &data16);
+//	/* Disable BAM mode and Teton mode */
+//	srab_sgmii_wreg(robo, locpage, XGXS16G_BAM_NEXTPAGE_MP5_NEXTPAGECTRLr, &data16);
 
 	/* Enable lanes */
 	srab_sgmii_rreg(robo, locpage, XGXS16G_XGXSBLK1_LANECTRL0r, &data16);
