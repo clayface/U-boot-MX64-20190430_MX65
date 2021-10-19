@@ -111,7 +111,7 @@ int usb_boot(void)
 		led_flash();
 		run_command_list("usb start; \
 		fatload usb 0:1 \
-		0x60008000 openwrt-bcm5862x-generic-meraki_mx65-initramfs-kernel.bin; \
+		0x60008000 openwrt-bcm53xx-generic-meraki_mx65-initramfs.bin; \
 		bootbk 0x60008000 bootkernel2", -1, 0);
 	};
 
