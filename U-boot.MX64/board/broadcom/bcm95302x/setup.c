@@ -79,7 +79,7 @@ int mdio_rst(void)
 	return 0;
 };
 
-int led_flash(void)
+int led_flash(int time)
 {
 	uint32_t out;
 	uint32_t outen;
@@ -95,28 +95,36 @@ int led_flash(void)
 		out ^= ( 1 << 3 ); outen ^= ( 1 << 31 );
 		__raw_writel(out, ChipcommonA_GPIOOut);
 		__raw_writel(outen, ChipcommonA_GPIOOutEn);
-		mdelay(250);
+		mdelay(time);
 	};
 };
 
 int usb_boot(void)
 {
+//	uint32_t regData;
+//	uint32_t tmp;
+//	tmp = __raw_readl(ChipcommonA_GPIOInput);
+//	tmp = tmp & (1 << 8);
+//	if (tmp == 0) {
+//		printf("\nRESET pressed: USB boot enabled\n");
+		led_flash(250);
+		run_command_list("usb start; \
+		fatload usb 0:1 \
+		${loadaddr} ${initramfs_filename}; \
+		bootm ${loadaddr}#${config_dts}", -1, 0);
+//	};
+
+	return 1;
+};
+
+int rst_check(void)
+{
 	uint32_t regData;
 	uint32_t tmp;
 	tmp = __raw_readl(ChipcommonA_GPIOInput);
 	tmp = tmp & (1 << 8);
-//      printf("tmp = %08X\n", tmp);
-	if (tmp == 0) {
-		printf("\nRESET pressed: USB boot enabled\n");
-		led_flash();
-		run_command_list("usb start; \
-		fatload usb 0:1 \
-		0x60008000 openwrt-bcm5862x-generic-meraki_mx65-initramfs-kernel.bin; \
-		bootbk 0x60008000 bootkernel2", -1, 0);
-	};
-
-	return 0;
-};
+	return tmp;
+}
 
 int dev_init(void)
 {
@@ -124,8 +132,14 @@ int dev_init(void)
 	mdio_rst();
 	ehci_init();
 	periph_enable();
-//	usb_boot();
-
+	if (rst_check() == 0) {
+		printf("\nRESET pressed: USB boot enabled\n");
+		if (usb_boot() == 1)
+			if (rst_check() == 0) {
+				led_flash(100);
+				run_command_list("env default -a -f && saveenv", -1, 0);
+			}
+	}
 	return 0;
 }
 
